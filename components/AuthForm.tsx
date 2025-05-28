@@ -76,9 +76,34 @@ const AuthForm = ({ type }: { type: FormType }) => {
                 toast.success('Sign in successfully.');
                 router.push('/')
             }
-        } catch (error) {
+        } catch (error: any) {
             console.log(error);
-            toast.error(`There was an error: ${error}`)
+            // Handle specific Firebase error codes
+            switch (error.code) {
+                case 'auth/invalid-credential':
+                    toast.error('Invalid email or password. Please try again.');
+                    break;
+                case 'auth/user-not-found':
+                    toast.error('No account found with this email. Please sign up first.');
+                    break;
+                case 'auth/wrong-password':
+                    toast.error('Incorrect password. Please try again.');
+                    break;
+                case 'auth/invalid-email':
+                    toast.error('Invalid email format. Please check your email.');
+                    break;
+                case 'auth/email-already-in-use':
+                    toast.error('This email is already registered. Please sign in instead.');
+                    break;
+                case 'auth/weak-password':
+                    toast.error('Password is too weak. Please use a stronger password.');
+                    break;
+                case 'auth/network-request-failed':
+                    toast.error('Network error. Please check your internet connection.');
+                    break;
+                default:
+                    toast.error('An error occurred. Please try again.');
+            }
         }
     }
 
